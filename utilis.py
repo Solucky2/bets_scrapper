@@ -33,11 +33,15 @@ def data_frame_two_possibilities(players_names_list, odd_values_list):
     for name in players_names_list:
         cleaned_name = name.strip().replace('\n', '').replace('                ', '')
         cleaned_names_list.append(cleaned_name)
+    cleaned_odds_list = []
+    for odd in odd_values_list:
+        cleaned_odd = odd.strip().replace('-', '1,0')
+        cleaned_odds_list.append(cleaned_odd)
     column1 = []
     column2 = []
     column3 = []
     column4 = []
-    for index, value in enumerate(odd_values_list):
+    for index, value in enumerate(cleaned_odds_list):
         if index % 2 == 0:
             if index < len(cleaned_names_list):
                 column1.append(cleaned_names_list[index])
@@ -70,14 +74,13 @@ def rows_iterate_two_possibilities(df):
                 continue
         except ValueError:
             continue
-    df.insert(4, 'Wartość_Zwrotu', value_column)
+    df.insert(len(df.columns), 'Wartość_Zwrotu', value_column)
     if len(proccessed_odds) > 0:
         print('Found odds below 1.0')
         return df, '\n', proccessed_odds
     else:
         print("No odds below 1.0")
         return df
-
 
 
 def rows_iterate_three_possibilities(df):
@@ -97,7 +100,7 @@ def rows_iterate_three_possibilities(df):
                 continue
         except ValueError:
             continue
-    df.insert(5, 'Wartość_Zwrotu', value_column)
+    df.insert(len(df.columns), 'Wartość_Zwrotu', value_column)
     if len(proccessed_odds) > 0:
         print("Found odds below 1.0")
         return df, '\n', proccessed_odds
@@ -111,6 +114,10 @@ def data_frame_three_possibilities(clubs_name_list, odd_values_list):
     for club_name in clubs_name_list:
         cleaned_name = club_name.strip().replace('\n', '').replace('                ', '')
         cleaned_clubs_names_list.append(cleaned_name)
+    cleaned_odds_list = []
+    for odd in odd_values_list:
+        cleaned_odd = odd.strip().replace('-', '1,0')
+        cleaned_odds_list.append(cleaned_odd)
     column1 = []  # nazwa1
     column2 = []  # nazwa2
     column3 = []  # wygrana1
@@ -123,15 +130,24 @@ def data_frame_three_possibilities(clubs_name_list, odd_values_list):
         else:
             column2.append(cleaned_clubs_names_list[index])
 
-    for index in range(len(odd_values_list)):
+    for index in range(len(cleaned_odds_list)):
         if index % 3 == 0:
-            if len(odd_values_list[index]) < 6:
-                column3.append(odd_values_list[index])
+            if len(cleaned_odds_list[index]) < 6:
+                column3.append(cleaned_odds_list[index])
         elif index % 3 == 1:
-            column4.append(odd_values_list[index])
+            column4.append(cleaned_odds_list[index])
         else:
-            column5.append(odd_values_list[index])
+            column5.append(cleaned_odds_list[index])
 
-    data = zip_longest(column1, column2, column3, column4, column5, fillvalue='None')
+    data = zip_longest(column1, column2, column3, column4, column5, fillvalue='1,0')
     df = pd.DataFrame(data, columns=['Klub1', 'Klub2', 'Wygrana1', 'Remis', 'Wygrana2'])
     return df
+
+
+def save_to_excel(df, path, sheet_name):
+    try:
+        with pd.ExcelWriter(path, mode='a', engine='openpyxl', if_sheet_exists='overlay') as writer:
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+    except FileNotFoundError:
+        df.to_excel(path, sheet_name=sheet_name, index=False)
