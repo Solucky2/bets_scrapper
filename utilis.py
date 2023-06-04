@@ -58,6 +58,8 @@ def data_frame_two_possibilities(players_names_list, odd_values_list):
         'Kurs2': column4
     }
     df = pd.DataFrame(data)
+    if df.empty:
+        print('There was a problem with loading a page, check if it still exists')
     return df
 
 
@@ -76,10 +78,10 @@ def rows_iterate_two_possibilities(df):
             continue
     df.insert(len(df.columns), 'Wartość_Zwrotu', value_column)
     if len(proccessed_odds) > 0:
-        print('Found odds below 1.0')
+        print('Scrapped, found odds below 1.0')
         return df, '\n', proccessed_odds
     else:
-        print("No odds below 1.0")
+        print("Scrapped, no odds below 1.0")
         return df
 
 
@@ -100,12 +102,17 @@ def rows_iterate_three_possibilities(df):
                 continue
         except ValueError:
             continue
-    df.insert(len(df.columns), 'Wartość_Zwrotu', value_column)
+    try:
+        df.insert(len(df.columns), 'Wartość_Zwrotu', value_column)
+    except ValueError:
+        print(f'There was a problem with scrapping, try again in couple more minutes')
+        return 0
+
     if len(proccessed_odds) > 0:
-        print("Found odds below 1.0")
+        print("Scrapped, found odds below 1.0")
         return df, '\n', proccessed_odds
     else:
-        print("No odds below 1.0")
+        print("Scrapped, no odds below 1.0")
         return df
 
 
@@ -141,12 +148,14 @@ def data_frame_three_possibilities(clubs_name_list, odd_values_list):
 
     data = zip_longest(column1, column2, column3, column4, column5, fillvalue='1,0')
     df = pd.DataFrame(data, columns=['Klub1', 'Klub2', 'Wygrana1', 'Remis', 'Wygrana2'])
+    if df.empty:
+        print('There was a problem with loading a page, check if it still exists')
     return df
 
 
 def save_to_excel(df, path, sheet_name):
     try:
-        with pd.ExcelWriter(path, mode='a', engine='openpyxl', if_sheet_exists='overlay') as writer:
+        with pd.ExcelWriter(path, mode='a', engine='openpyxl', if_sheet_exists='replace') as writer:
             df.to_excel(writer, sheet_name=sheet_name, index=False)
 
     except FileNotFoundError:
