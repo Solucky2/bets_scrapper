@@ -11,3 +11,7 @@ betclic_selectors_three = {
     'la_liga': 'https://www.betclic.pl/pilka-nozna-s1/la-liga-c7',
     'best_ue_leagues': 'https://www.betclic.pl/najlepsze-ligi-europejskie-s1/najlepsze-ligi-europejskie-p1' # dodaj
 }
+
+sts_selectors = {
+    'serieA': 'https://www.sts.pl/pl/zaklady-bukmacherskie/pilka-nozna/wlochy/1-liga/184/30874/86484/'
+}

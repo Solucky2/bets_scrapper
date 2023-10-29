@@ -68,7 +68,7 @@ def rows_iterate_two_possibilities(df):
     value_column = []
     for index, row in df.iterrows():
         try:
-            value = float(1 / float(row['Kurs1'].replace(',', '.')) + 1 / float(row['Kurs2'].replace(',', '.')))
+            value = 1 / float(row['Kurs1'].replace(',', '.')) + 1 / float(row['Kurs2'].replace(',', '.'))
             value_column.append(value)
             if value < 1:
                 proccessed_odds.append(row['Zawodnik1'] + '/' + row['Zawodnik2'] + '/' + str(value))
@@ -90,11 +90,9 @@ def rows_iterate_three_possibilities(df):
     value_column = []
     for index, row in df.iterrows():
         try:
-            value = float(
-                1 / float(row['Wygrana1'].replace(',', '.'))
-                + 1 / float(row['Remis'].replace(',', '.'))
+            value = 1 / float(row['Wygrana1'].replace(',', '.')) \
+                + 1 / float(row['Remis'].replace(',', '.')) \
                 + 1 / float(row['Wygrana2'].replace(',', '.'))
-            )
             value_column.append(value)
             if value < 1:
                 proccessed_odds.append(row['Klub1'] + '/' + row['Klub2'] + '/' + str(value))
